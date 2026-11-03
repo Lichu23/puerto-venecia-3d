@@ -110,7 +110,9 @@ Three.js r186 is loaded from the jsDelivr CDN with a pinned version.
   - [ ] First-person walking: WASD + mouse on desktop, on-screen joystick on mobile
   - [ ] Switching floors (escalators or floor buttons)
   - [ ] Search for a store, then jump to it or show a path
-  - [ ] Click a shopfront to show its info (category, phone, hours, link)
+  - [x] Step 3: click a shopfront (desktop, crosshair) or tap it (phone) to open a card with
+        category, floor and zone, description, phone, hours, services and a link to its page.
+        Desktop shows the shop name under the crosshair. Only shops on your floor within 30 m.
   - [ ] 2D minimap
 - [ ] **6. Real layout (v2)**: replace the generated layout with the positions from step 4.
 - [ ] **7. Optional**: make this folder a git repository with a remote (for backups and

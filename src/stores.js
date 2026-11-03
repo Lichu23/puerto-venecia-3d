@@ -69,7 +69,12 @@ export function parseStores(data) {
           section: cleanText(raw.section, 20),
           categories,
           group: groupOf(categories, raw.section),
-          raw,
+          phone: cleanPhone(raw.phone),
+          hours: cleanText(raw.hours, 80),
+          description: cleanText(raw.description, 400),
+          services: cleanList(raw.services, 12, 60),
+          extras: cleanList(raw.extra_options, 6, 60),
+          url: safeStoreUrl(raw.url),
         });
       }
     }
@@ -79,6 +84,30 @@ export function parseStores(data) {
 
 function cleanText(value, max) {
   return typeof value === "string" ? value.replace(/\s+/g, " ").trim().slice(0, max) : "";
+}
+
+function cleanList(value, maxItems, maxLength) {
+  return Array.isArray(value) ? value.map((v) => cleanText(v, maxLength)).filter(Boolean).slice(0, maxItems) : [];
+}
+
+// Phone numbers become tel: links, so only digits, spaces and a leading + are kept.
+function cleanPhone(value) {
+  const text = cleanText(value, 30);
+  return /^\+?[\d ]{6,}$/.test(text) ? text : "";
+}
+
+// Links open the mall's own store page, so anything not on puertovenecia.com over https is dropped.
+function safeStoreUrl(value) {
+  if (typeof value !== "string") return "";
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    if (url.protocol !== "https:" || (host !== "puertovenecia.com" && host !== "www.puertovenecia.com")) return "";
+    if (url.username || url.password) return "";
+    return url.href;
+  } catch {
+    return "";
+  }
 }
 
 function groupOf(categories, section) {
@@ -165,6 +194,45 @@ export function frontOf(slot, distance, height) {
   const f = wallFrame(slot);
   const base = slot.floor * MALL.floorHeight;
   return new THREE.Vector3(f.x + Math.sin(f.rotY) * distance, base + height, f.z + Math.cos(f.rotY) * distance);
+}
+
+/**
+ * Which shop the ray points at, or null. The ray only picks units on the given floor,
+ * up to maxDistance metres away. The shell is a box, so the first wall the ray meets from
+ * inside is the one it hits; no triangle raycast is needed.
+ */
+export function createStorePicker(placed) {
+  const { halfX, halfZ, floorHeight } = MALL;
+  const face = 0.25; // shop windows sit this far out from the wall
+  const byWall = new Map();
+  for (const entry of placed) {
+    if (!entry.store) continue;
+    const key = `${entry.slot.floor}${entry.slot.wall}`;
+    if (!byWall.has(key)) byWall.set(key, []);
+    byWall.get(key).push(entry);
+  }
+
+  return function pick(origin, direction, floor, maxDistance) {
+    let best = Infinity;
+    let wall = null;
+    const test = (t, name) => {
+      if (t > 0 && t < best) {
+        best = t;
+        wall = name;
+      }
+    };
+    if (direction.z > 1e-6) test((halfZ - face - origin.z) / direction.z, "n");
+    if (direction.z < -1e-6) test((-halfZ + face - origin.z) / direction.z, "s");
+    if (direction.x > 1e-6) test((halfX - face - origin.x) / direction.x, "e");
+    if (direction.x < -1e-6) test((-halfX + face - origin.x) / direction.x, "w");
+    if (!wall || best > maxDistance) return null;
+
+    const y = origin.y + direction.y * best - floor * floorHeight;
+    if (y < 0 || y > 5.6) return null; // below the floor or above the sign band
+    const a = wall === "n" || wall === "s" ? origin.x + direction.x * best : origin.z + direction.z * best;
+    const units = byWall.get(`${floor}${wall}`) ?? [];
+    return units.find((u) => Math.abs(a - u.slot.a) <= u.slot.width / 2)?.store ?? null;
+  };
 }
 
 export function buildStores(scene, renderer, stores) {

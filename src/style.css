@@ -63,6 +63,27 @@ body {
   box-shadow: 0 0 0 1.5px rgb(0 0 0 / 0.35);
 }
 
+.aim-hint {
+  position: absolute;
+  top: calc(50% + 18px);
+  left: 50%;
+  max-width: min(80vw, 420px);
+  margin: 0;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgb(22 26 31 / 0.75);
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translateX(-50%);
+}
+
+.aim-hint[hidden],
+.store-card [hidden] {
+  display: none !important;
+}
+
 /* Start / pause overlay */
 .overlay {
   position: fixed;
@@ -205,6 +226,94 @@ kbd {
   margin: 14px 0 0;
   color: var(--muted);
   font-size: 13px;
+}
+
+/* Shop info card */
+.card-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.card-name {
+  margin: 6px 0 0;
+  font-size: 24px;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.card-where {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.card-description {
+  margin: 14px 0 0;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.card-facts {
+  margin-top: 16px;
+}
+
+.card-facts a {
+  color: var(--accent);
+}
+
+.card-services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+}
+
+.card-services li {
+  padding: 3px 9px;
+  border: 1px solid #3a424c;
+  border-radius: 999px;
+  color: var(--muted);
+}
+
+.card-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.card-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border: 1px solid #4a525c;
+  border-radius: 10px;
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  touch-action: manipulation;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-link:hover {
+    background: #2a3038;
+  }
+}
+
+.card-link:active {
+  background: #2a3038;
+}
+
+.card-link:focus-visible,
+.card-facts a:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
 }
 
 .message {

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -16,15 +16,16 @@
     </script>
   </head>
   <body>
-    <canvas id="scene" aria-label="3D view of the mall"></canvas>
+    <canvas id="scene" aria-label="Vista 3D del centro comercial"></canvas>
 
     <div id="hud" class="hud">
       <p id="floor-label" class="floor-label" aria-live="polite">Planta Baja</p>
       <div class="crosshair" aria-hidden="true"></div>
+      <p id="aim-hint" class="aim-hint desktop-only" hidden></p>
 
       <!-- Touch screens only (shown by CSS when the main pointer is a finger) -->
-      <button id="pause" type="button" class="pause touch-only">Menu</button>
-      <div class="floor-switch touch-only" role="group" aria-label="Change floor">
+      <button id="pause" type="button" class="pause touch-only">Menú</button>
+      <div class="floor-switch touch-only" role="group" aria-label="Cambiar de planta">
         <button type="button" data-floor="1" aria-pressed="false">Alta</button>
         <button type="button" data-floor="0" aria-pressed="true">Baja</button>
       </div>
@@ -36,35 +37,52 @@
     <div id="overlay" class="overlay">
       <section class="panel" role="dialog" aria-modal="true" aria-labelledby="title">
         <h1 id="title">Puerto Venecia 3D</h1>
-        <p class="subtitle">Prototype · Step 2: stores</p>
+        <p class="subtitle">Prototipo · Paso 3: información de tiendas</p>
 
-        <button id="start" type="button" class="start" disabled>Loading…</button>
+        <button id="start" type="button" class="start" disabled>Cargando…</button>
 
         <dl class="keys desktop-only">
-          <div><dt><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrows</dt><dd>Move</dd></div>
-          <div><dt>Mouse</dt><dd>Look around</dd></div>
-          <div><dt><kbd>Shift</kbd></dt><dd>Run</dd></div>
-          <div><dt><kbd>1</kbd> <kbd>2</kbd></dt><dd>Ground / upper floor</dd></div>
-          <div><dt><kbd>Esc</kbd></dt><dd>Menu</dd></div>
+          <div><dt><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> o flechas</dt><dd>Moverse</dd></div>
+          <div><dt>Ratón</dt><dd>Mirar alrededor</dd></div>
+          <div><dt><kbd>Shift</kbd></dt><dd>Correr</dd></div>
+          <div><dt><kbd>1</kbd> <kbd>2</kbd></dt><dd>Planta baja / alta</dd></div>
+          <div><dt>Clic en una tienda</dt><dd>Ver información</dd></div>
+          <div><dt><kbd>Esc</kbd></dt><dd>Menú</dd></div>
         </dl>
 
         <dl class="keys touch-only">
-          <div><dt>Pad (bottom left)</dt><dd>Move</dd></div>
-          <div><dt>Drag on the screen</dt><dd>Look around</dd></div>
-          <div><dt>Alta / Baja</dt><dd>Upper / ground floor</dd></div>
-          <div><dt>Menu (top right)</dt><dd>Back to this panel</dd></div>
+          <div><dt>Mando (abajo a la izquierda)</dt><dd>Moverse</dd></div>
+          <div><dt>Arrastrar en la pantalla</dt><dd>Mirar alrededor</dd></div>
+          <div><dt>Tocar una tienda</dt><dd>Ver información</dd></div>
+          <div><dt>Alta / Baja</dt><dd>Planta alta / baja</dd></div>
+          <div><dt>Menú (arriba a la derecha)</dt><dd>Volver a este panel</dd></div>
         </dl>
 
-        <h2 class="legend-title">Shop colours</h2>
+        <h2 class="legend-title">Colores de las tiendas</h2>
         <ul id="legend" class="legend"></ul>
-        <p id="store-count" class="store-count" aria-live="polite">Loading stores…</p>
+        <p id="store-count" class="store-count" aria-live="polite">Cargando tiendas…</p>
 
         <p id="message" class="message" role="status"></p>
       </section>
     </div>
 
+    <div id="store-card" class="overlay" hidden>
+      <section class="panel store-card" role="dialog" aria-modal="true" aria-labelledby="card-name">
+        <p id="card-group" class="card-group"><span id="card-swatch" class="swatch"></span><span id="card-group-label"></span></p>
+        <h2 id="card-name" class="card-name"></h2>
+        <p id="card-where" class="card-where"></p>
+        <p id="card-description" class="card-description"></p>
+        <dl id="card-facts" class="keys card-facts"></dl>
+        <ul id="card-services" class="card-services"></ul>
+        <div class="card-actions">
+          <a id="card-link" class="card-link" target="_blank" rel="noopener noreferrer">Página de la tienda</a>
+          <button id="card-close" type="button" class="start">Seguir paseando</button>
+        </div>
+      </section>
+    </div>
+
     <noscript>
-      <p class="noscript">This 3D map needs JavaScript turned on.</p>
+      <p class="noscript">Este mapa 3D necesita JavaScript activado.</p>
     </noscript>
 
     <script type="module" src="src/main.js"></script>
