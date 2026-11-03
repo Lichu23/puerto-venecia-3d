@@ -70,11 +70,13 @@ export function buildMall(scene, renderer) {
     floor: new THREE.MeshLambertMaterial({ map: makeTileTexture(renderer) }),
     wall: new THREE.MeshLambertMaterial({ color: 0xece8e1 }),
     trim: new THREE.MeshLambertMaterial({ color: 0xfafafa }),
-    slab: new THREE.MeshLambertMaterial({ color: 0xdedad3 }),
+    slab: new THREE.MeshLambertMaterial({ color: 0xdedad3, emissive: 0xdedad3, emissiveIntensity: 0.3 }),
     fascia: new THREE.MeshLambertMaterial({ color: 0x3b4149 }),
     metal: new THREE.MeshLambertMaterial({ color: 0x9aa3ad }),
     entrance: new THREE.MeshLambertMaterial({ color: 0x5d7f99 }),
-    ceiling: new THREE.MeshLambertMaterial({ color: 0xf4f2ee, side: THREE.DoubleSide }),
+    // Faces pointing down only get the dim hemisphere ground light, so ceilings glow a little
+    // on their own, as if lit by the mall's lamps.
+    ceiling: new THREE.MeshLambertMaterial({ color: 0xf4f2ee, emissive: 0xf4f2ee, emissiveIntensity: 0.35, side: THREE.DoubleSide }),
     skylight: new THREE.MeshBasicMaterial({ color: 0xeaf4ff }),
     glass: new THREE.MeshBasicMaterial({
       color: 0xbfe0f0,
