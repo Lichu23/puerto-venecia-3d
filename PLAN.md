@@ -51,6 +51,22 @@ python -I scripts/group_by_floor.py data/stores.json data/stores-by-floor.json d
 (To refresh the URL list, download `https://www.puertovenecia.com/sitemap.xml` again and keep
 the `/tiendas/`, `/restaurantes/` and `/ocio/` URLs.)
 
+### Run the 3D prototype
+
+The page loads ES modules, so open it through a local server (not by double-clicking the file):
+
+```bash
+python -m http.server 8765 --bind 127.0.0.1
+```
+
+Then open http://127.0.0.1:8765. Code lives in `index.html` and `src/`
+(`mall.js` = building, `player.js` = walking and collision, `touch.js` = phone pad and
+finger look, `main.js` = setup and render loop).
+
+To try it on a phone on the same Wi-Fi, start the server with `--bind 0.0.0.0` and open
+`http://<this PC's IP>:8765` on the phone (Windows may ask to allow Python through the firewall).
+Three.js r186 is loaded from the jsDelivr CDN with a pinned version.
+
 ### What we know about the current official map
 - `puertovenecia.com/mapa` embeds **Mappedin Web**, a commercial indoor-map service
   (venue `cbre-puerto-venecia`, licensed to the mall operator CBRE).
@@ -83,6 +99,9 @@ the `/tiendas/`, `/restaurantes/` and `/ocio/` URLs.)
 - [ ] **4. Store positions**: write each store's approximate position (floor, zone, x/y) into
       a layout file, e.g. `data/layout.json`.
 - [ ] **5. 3D prototype (v1)**:
+  - [x] Step 1: walkable mall shell (2 floors, atrium, columns, railings, skylight),
+        WASD + mouse, Shift to run, keys 1/2 to change floor (temporary)
+  - [x] Touch: joystick pad (bottom left), drag to look, Alta/Baja floor buttons, pause button
   - [ ] Floors and zones as simple 3D geometry
   - [ ] Shopfronts with name signs, coloured by category (logos optional)
   - [ ] First-person walking: WASD + mouse on desktop, on-screen joystick on mobile

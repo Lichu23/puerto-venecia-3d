@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#1b1f24" />
+    <title>Puerto Venecia 3D</title>
+    <link rel="stylesheet" href="src/style.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="scene" aria-label="3D view of the mall"></canvas>
+
+    <div id="hud" class="hud">
+      <p id="floor-label" class="floor-label" aria-live="polite">Planta Baja</p>
+      <div class="crosshair" aria-hidden="true"></div>
+
+      <!-- Touch screens only (shown by CSS when the main pointer is a finger) -->
+      <button id="pause" type="button" class="pause touch-only" aria-label="Pause">
+        <span aria-hidden="true">❚❚</span>
+      </button>
+      <div class="floor-switch touch-only" role="group" aria-label="Change floor">
+        <button type="button" data-floor="1" aria-pressed="false">Alta</button>
+        <button type="button" data-floor="0" aria-pressed="true">Baja</button>
+      </div>
+      <div id="joystick" class="joystick touch-only" aria-hidden="true">
+        <div id="joystick-knob" class="joystick-knob"></div>
+      </div>
+    </div>
+
+    <div id="overlay" class="overlay">
+      <section class="panel" role="dialog" aria-modal="true" aria-labelledby="title">
+        <h1 id="title">Puerto Venecia 3D</h1>
+        <p class="subtitle">Prototype · Step 1: walking</p>
+
+        <button id="start" type="button" class="start" disabled>Loading…</button>
+
+        <dl class="keys desktop-only">
+          <div><dt><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrows</dt><dd>Move</dd></div>
+          <div><dt>Mouse</dt><dd>Look around</dd></div>
+          <div><dt><kbd>Shift</kbd></dt><dd>Run</dd></div>
+          <div><dt><kbd>1</kbd> <kbd>2</kbd></dt><dd>Ground / upper floor</dd></div>
+          <div><dt><kbd>Esc</kbd></dt><dd>Pause</dd></div>
+        </dl>
+
+        <dl class="keys touch-only">
+          <div><dt>Pad (bottom left)</dt><dd>Move</dd></div>
+          <div><dt>Drag on the screen</dt><dd>Look around</dd></div>
+          <div><dt>Alta / Baja</dt><dd>Upper / ground floor</dd></div>
+          <div><dt>❚❚ (top right)</dt><dd>Pause</dd></div>
+        </dl>
+
+        <p id="message" class="message" role="status"></p>
+      </section>
+    </div>
+
+    <noscript>
+      <p class="noscript">This 3D map needs JavaScript turned on.</p>
+    </noscript>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
