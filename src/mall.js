@@ -1,20 +1,20 @@
 // Builds the mall shell: two floors around a central atrium, with walls, columns,
 // glass railings and a skylight. All sizes are in metres.
 //
-// This is the generic v1 layout. Store fronts are added on top of it in step 2,
+// This is the generic v1 layout. Store fronts are added on top of it by stores.js,
 // and in v2 the shape is adjusted to the real building.
 
 import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 
 export const MALL = {
-  halfX: 70, // inner face of the end walls (building is 140 m long)
+  halfX: 82, // inner face of the end walls (building is 164 m long: room for 92 ground-floor shops)
   halfZ: 18, // inner face of the long walls (building is 36 m wide)
   wallDepth: 0.5, // pilasters and fascias stick out this far from the walls
   floorHeight: 6,
   roofY: 12,
   slab: 0.4,
-  voidHalfX: 55, // atrium opening in the upper floor
+  voidHalfX: 66, // atrium opening in the upper floor
   voidHalfZ: 5,
   railGap: 0.1, // keeps the player this far from the glass railing
   columnRadius: 0.4,
@@ -124,11 +124,12 @@ export function buildMall(scene, renderer) {
     box("trim", wallDepth, roofY, 0.6, -halfX + wallDepth / 2, roofY / 2, z);
   }
 
-  // Fascia bands above the shopfronts on both floors (store signs go here in step 2)
+  // Fascia bands above the shopfronts on both floors (stores.js puts the name signs on them)
   for (const baseY of [0, upperY]) {
     const y = baseY + 5.1;
     for (const side of [1, -1]) {
       box("fascia", halfX * 2, 1, 0.06, 0, y, side * (halfZ - wallDepth - 0.03));
+      box("fascia", 0.06, 1, halfZ * 2, side * (halfX - wallDepth - 0.03), y, 0);
     }
   }
 

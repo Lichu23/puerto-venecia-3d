@@ -60,7 +60,7 @@ python -m http.server 8765 --bind 127.0.0.1
 ```
 
 Then open http://127.0.0.1:8765. Code lives in `index.html` and `src/`
-(`mall.js` = building, `player.js` = walking and collision, `touch.js` = phone pad and
+(`mall.js` = building, `stores.js` = shopfronts and signs, `player.js` = walking and collision, `touch.js` = phone pad and
 finger look, `main.js` = setup and render loop).
 
 To try it on a phone on the same Wi-Fi, start the server with `--bind 0.0.0.0` and open
@@ -103,7 +103,10 @@ Three.js r186 is loaded from the jsDelivr CDN with a pinned version.
         WASD + mouse, Shift to run, keys 1/2 to change floor (temporary)
   - [x] Touch: joystick pad (bottom left), drag to look, Alta/Baja floor buttons, pause button
   - [ ] Floors and zones as simple 3D geometry
-  - [ ] Shopfronts with name signs, coloured by category (logos optional)
+  - [x] Step 2: shopfronts with name signs, coloured by category (`src/stores.js`). Generated
+        layout: 92 units on Planta Baja (incl. the 4 Planta -1 businesses), 71 stores in 96
+        units on Planta Alta, grouped by zone. The 46 outdoor stores are not placed yet.
+        Building lengthened to 164 m to fit them. Logos not used.
   - [ ] First-person walking: WASD + mouse on desktop, on-screen joystick on mobile
   - [ ] Switching floors (escalators or floor buttons)
   - [ ] Search for a store, then jump to it or show a path

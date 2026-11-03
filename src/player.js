@@ -4,7 +4,7 @@
 
 import * as THREE from "three";
 import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
-import { FLOORS, isWalkable, nearestWalkable } from "./mall.js";
+import { FLOORS, MALL, isWalkable, nearestWalkable } from "./mall.js";
 
 const EYE_HEIGHT = 1.65;
 const RADIUS = 0.35;
@@ -42,7 +42,7 @@ export function createPlayer(camera, lockElement, { onFloorChange } = {}) {
   const isActive = () => controls.isLocked || touchActive;
 
   // Start at the west entrance of the ground floor, looking down the gallery.
-  camera.position.set(-62, FLOORS[0].y + EYE_HEIGHT, 0);
+  camera.position.set(-MALL.halfX + 8, FLOORS[0].y + EYE_HEIGHT, 0); // just inside the west entrance
   camera.rotation.set(0, -Math.PI / 2, 0, "YXZ");
 
   function setFloor(index) {

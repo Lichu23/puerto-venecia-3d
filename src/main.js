@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { buildMall, FLOORS } from "./mall.js";
 import { createPlayer } from "./player.js";
+import { buildStores, CATEGORY_GROUPS, loadStores } from "./stores.js";
 import { createTouchControls } from "./touch.js";
 
 const canvas = document.getElementById("scene");
@@ -10,6 +11,8 @@ const pauseButton = document.getElementById("pause");
 const message = document.getElementById("message");
 const floorLabel = document.getElementById("floor-label");
 const floorButtons = document.querySelectorAll(".floor-switch button");
+const legend = document.getElementById("legend");
+const storeCount = document.getElementById("store-count");
 
 // Same test the CSS uses to show the touch pad: is the main pointer a finger?
 const touchMode = window.matchMedia("(pointer: coarse)").matches;
@@ -35,6 +38,28 @@ scene.fog = new THREE.Fog(skyColor, 60, 170);
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 250);
 
 buildMall(scene, renderer);
+
+// Category legend in the start panel (textContent only: no HTML from data)
+for (const group of CATEGORY_GROUPS) {
+  const item = document.createElement("li");
+  const swatch = document.createElement("span");
+  swatch.className = "swatch";
+  swatch.style.backgroundColor = group.color;
+  item.append(swatch, group.label);
+  legend.append(item);
+}
+
+// Stores load in the background; walking can start before they appear.
+loadStores()
+  .then(({ indoor, outdoor }) => {
+    buildStores(scene, renderer, indoor);
+    const baja = indoor.filter((s) => s.floor === 0).length;
+    storeCount.textContent = `${baja} stores on Planta Baja, ${indoor.length - baja} on Planta Alta` + (outdoor ? ` · ${outdoor} outdoor stores not shown yet` : "");
+  })
+  .catch((error) => {
+    console.error(error);
+    storeCount.textContent = "Couldn't load the store list. The building works, but without shops.";
+  });
 
 const player = createPlayer(camera, document.body, {
   onFloorChange: (floor) => {
