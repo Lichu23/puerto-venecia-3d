@@ -197,7 +197,7 @@ export function frontOf(slot, distance, height) {
 }
 
 /**
- * Which shop the ray points at, or null. The ray only picks units on the given floor,
+ * Which shop the ray points at ({ store, slot }), or null. The ray only picks units on the given floor,
  * up to maxDistance metres away. The shell is a box, so the first wall the ray meets from
  * inside is the one it hits; no triangle raycast is needed.
  */
@@ -231,7 +231,7 @@ export function createStorePicker(placed) {
     if (y < 0 || y > 5.6) return null; // below the floor or above the sign band
     const a = wall === "n" || wall === "s" ? origin.x + direction.x * best : origin.z + direction.z * best;
     const units = byWall.get(`${floor}${wall}`) ?? [];
-    return units.find((u) => Math.abs(a - u.slot.a) <= u.slot.width / 2)?.store ?? null;
+    return units.find((u) => Math.abs(a - u.slot.a) <= u.slot.width / 2) ?? null;
   };
 }
 

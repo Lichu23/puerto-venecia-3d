@@ -8,7 +8,7 @@ browser.
 Finding a store in a large mall from a flat map is hard. This project builds an interactive 3D
 version of Puerto Venecia that you can explore like a game:
 
-- **Walk around** in first person (WASD + mouse on desktop, on-screen joystick on mobile)
+- **Move around** like a street-level map: click or tap the floor to glide along the lanes, drag to look
 - **Switch floors** using escalators or floor buttons
 - **Search** for a store and jump to it or see the path
 - **Click a shopfront** to see its category, phone, opening hours and website

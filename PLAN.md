@@ -60,8 +60,8 @@ python -m http.server 8765 --bind 127.0.0.1
 ```
 
 Then open http://127.0.0.1:8765. Code lives in `index.html` and `src/`
-(`mall.js` = building, `stores.js` = shopfronts and signs, `player.js` = walking and collision, `touch.js` = phone pad and
-finger look, `main.js` = setup and render loop).
+(`mall.js` = building, `stores.js` = shopfronts and signs, `lanes.js` = the lanes you move on, `escalators.js` = escalators and riding them, `markers.js` = floor cursor and
+touch arrows, `player.js` = glides along the lanes, drag to look and keys, `main.js` = setup, clicks, floor marker and render loop).
 
 To try it on a phone on the same Wi-Fi, start the server with `--bind 0.0.0.0` and open
 `http://<this PC's IP>:8765` on the phone (Windows may ask to allow Python through the firewall).
@@ -102,17 +102,43 @@ Three.js r186 is loaded from the jsDelivr CDN with a pinned version.
   - [x] Step 1: walkable mall shell (2 floors, atrium, columns, railings, skylight),
         WASD + mouse, Shift to run, keys 1/2 to change floor (temporary)
   - [x] Touch: joystick pad (bottom left), drag to look, Alta/Baja floor buttons, pause button
+        (replaced by Step 4)
   - [ ] Floors and zones as simple 3D geometry
   - [x] Step 2: shopfronts with name signs, coloured by category (`src/stores.js`). Generated
         layout: 92 units on Planta Baja (incl. the 4 Planta -1 businesses), 71 stores in 96
         units on Planta Alta, grouped by zone. The 46 outdoor stores are not placed yet.
         Building lengthened to 164 m to fit them. Logos not used.
-  - [ ] First-person walking: WASD + mouse on desktop, on-screen joystick on mobile
-  - [ ] Switching floors (escalators or floor buttons)
+  - [x] Switching floors: Step 5 below
   - [ ] Search for a store, then jump to it or show a path
   - [x] Step 3: click a shopfront (desktop, crosshair) or tap it (phone) to open a card with
         category, floor and zone, description, phone, hours, services and a link to its page.
         Desktop shows the shop name under the crosshair. Only shops on your floor within 30 m.
+  - [x] Step 4: move like a street-level map instead of walking (WASD and the joystick are gone).
+        Click or tap the floor to glide there; a ring on the floor shows where you will land.
+        Drag with the mouse or a finger to look around (no mouse capture, no crosshair). Click a
+        shop to glide to it, facing it, then its card opens. Up/down (W/S) step 5 m along the
+        lane you face, left/right (A/D) turn 30°. Alta/Baja buttons (and keys 1/2) on every
+        device; changing floor is a short glide up or down. With "reduce motion" on, moves are instant.
+  - [x] Step 4b: lanes (`src/lanes.js`). You only move along lanes, shown as blue lines on the
+        floor: one down the middle of each long walkway (z = ±11.5) and one across each end
+        (x = ±74), a loop around the atrium on both floors. A click snaps to the nearest lane
+        point (up to 30 m along the lane) and the glide follows the lanes, turning at corners.
+        Planta Baja: you can also hop straight sideways between the north and south lanes
+        (dodging columns). Planta Alta: the atrium is a hole, so you go round by an end lane.
+  - [x] Step 4c: street-level map markers (`src/markers.js`). You start at the west entrance
+        doors and walk in to the end lane when you press "Empezar a pasear". Desktop: the
+        cursor is a see-through disc on the floor under the mouse with a chevron pointing the
+        way you'll travel along the lane. Touch: white chevron arrows in a ring on the floor
+        ahead of you, one per lane move (forward, back, sideways hop on Planta Baja); tap one
+        to move 8 m that way. They hide while gliding and fade back in. Tapping the floor still works.
+  - [x] Step 5: escalators (`src/escalators.js`). A pair at each end of the atrium (one up, one
+        down), inside the opening, climbing toward the nearer end of the building, with moving
+        steps, glass balustrades and black handrails. The railing has a gap where they arrive.
+        Click or tap an escalator to ride it; Alta/Baja and keys 1/2 walk you to the nearest one
+        and ride it. You step on at the foot (ground floor, reached by a short blue lane across
+        the walkway) or from the end lane (upper floor), ride for 5 s looking along it, and step
+        off onto the end lane upstairs or at the foot downstairs. Next to an escalator the touch
+        arrows (and the up key when facing it) offer the ride. Other input waits during a ride.
   - [ ] 2D minimap
 - [ ] **6. Real layout (v2)**: replace the generated layout with the positions from step 4.
 - [ ] **7. Optional**: make this folder a git repository with a remote (for backups and

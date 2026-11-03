@@ -29,7 +29,16 @@ body {
   inset: 0;
   width: 100%;
   height: 100%;
-  touch-action: none;
+  touch-action: none; /* every drag on the view turns the camera */
+  cursor: default;
+}
+
+#scene.over-store {
+  cursor: pointer;
+}
+
+#scene.is-dragging {
+  cursor: grabbing;
 }
 
 /* HUD */
@@ -51,22 +60,11 @@ body {
   font-weight: 600;
 }
 
-.crosshair {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 6px;
-  height: 6px;
-  margin: -3px 0 0 -3px;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 0.85);
-  box-shadow: 0 0 0 1.5px rgb(0 0 0 / 0.35);
-}
-
+/* Shop name next to the mouse; main.js moves it with transform */
 .aim-hint {
   position: absolute;
-  top: calc(50% + 18px);
-  left: 50%;
+  top: 0;
+  left: 0;
   max-width: min(80vw, 420px);
   margin: 0;
   padding: 5px 10px;
@@ -76,10 +74,10 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transform: translateX(-50%);
 }
 
 .aim-hint[hidden],
+.menu-button[hidden],
 .store-card [hidden] {
   display: none !important;
 }
@@ -324,8 +322,7 @@ kbd {
 }
 
 /* Controls are not text: no long-press selection or callout on them */
-button,
-.joystick {
+button {
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
@@ -340,20 +337,13 @@ button,
   .touch-only {
     display: revert !important;
   }
-  .desktop-only,
-  .crosshair {
+  .desktop-only {
     display: none !important;
-  }
-  .joystick {
-    display: block !important;
-  }
-  .floor-switch {
-    display: flex !important;
   }
 }
 
-/* Touch HUD */
-.pause,
+/* HUD buttons */
+.menu-button,
 .floor-switch button {
   pointer-events: auto;
   border: 1px solid rgb(255 255 255 / 0.18);
@@ -361,23 +351,31 @@ button,
   color: var(--text);
   font: inherit;
   font-weight: 600;
+  cursor: pointer;
   touch-action: manipulation;
   transition: background-color 100ms ease-out, transform 100ms ease-out;
 }
 
-.pause:active,
+@media (hover: hover) and (pointer: fine) {
+  .menu-button:hover,
+  .floor-switch button:not([aria-pressed="true"]):hover {
+    background: rgb(42 48 56 / 0.9);
+  }
+}
+
+.menu-button:active,
 .floor-switch button:active {
   transform: scale(0.95);
   background: rgb(22 26 31 / 0.95);
 }
 
-.pause:focus-visible,
+.menu-button:focus-visible,
 .floor-switch button:focus-visible {
   outline: 3px solid #fff;
   outline-offset: 2px;
 }
 
-.pause {
+.menu-button {
   position: absolute;
   top: max(16px, env(safe-area-inset-top));
   right: max(16px, env(safe-area-inset-right));
@@ -390,6 +388,7 @@ button,
 
 .floor-switch {
   position: absolute;
+  display: flex;
   right: max(16px, env(safe-area-inset-right));
   bottom: calc(32px + env(safe-area-inset-bottom, 0px));
   flex-direction: column;
@@ -410,39 +409,6 @@ button,
   color: #08141b;
 }
 
-.joystick {
-  position: absolute;
-  left: max(28px, env(safe-area-inset-left));
-  bottom: calc(32px + env(safe-area-inset-bottom, 0px));
-  width: 136px;
-  height: 136px;
-  border: 2px solid rgb(255 255 255 / 0.35);
-  border-radius: 50%;
-  background: rgb(22 26 31 / 0.35);
-  pointer-events: auto;
-  touch-action: none; /* the pad owns every finger movement on it */
-}
-
-.joystick-knob {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 60px;
-  height: 60px;
-  margin: -30px 0 0 -30px;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 0.8);
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
-}
-
-.joystick:not(.is-active) .joystick-knob {
-  transition: transform 120ms ease-out; /* springs back to the centre when released */
-}
-
-.joystick.is-active {
-  background: rgb(22 26 31 / 0.5);
-}
-
 .noscript {
   position: fixed;
   inset: 0;
@@ -453,9 +419,8 @@ button,
 
 @media (prefers-reduced-motion: reduce) {
   .start,
-  .pause,
-  .floor-switch button,
-  .joystick-knob {
+  .menu-button,
+  .floor-switch button {
     transition: none !important;
   }
 }

@@ -32,6 +32,28 @@ for (let x = -MALL.voidHalfX; x <= MALL.voidHalfX; x += 22) {
   COLUMNS.push({ x, z: COLUMN_Z }, { x, z: -COLUMN_Z });
 }
 
+// Escalators: a pair at each end of the atrium, inside the opening and running along it.
+// Each pair climbs toward the nearer end of the building, from the ground floor at |x| ~ 53
+// to the edge of the upper end walkway at |x| = 66. One of each pair runs up, the other down.
+const ESCALATOR_SLOPE = Math.PI / 6; // 30 degrees, the usual angle
+export const ESCALATOR = {
+  slope: ESCALATOR_SLOPE,
+  run: MALL.floorHeight / Math.tan(ESCALATOR_SLOPE), // horizontal length of the sloped part
+  flat: 1.2, // level part of the moving steps at each end
+  stepWidth: 1.0,
+  width: 1.6, // across the balustrades
+  offsetZ: 1.1, // centre line of each escalator from the middle of the atrium
+};
+export const ESCALATORS = [];
+for (const side of [-1, 1]) {
+  const topX = side * MALL.voidHalfX; // top comb plate, at the upper floor edge
+  const bottomX = topX - side * (2 * ESCALATOR.flat + ESCALATOR.run); // bottom comb plate
+  ESCALATORS.push({ side, up: true, z: ESCALATOR.offsetZ, topX, bottomX }, { side, up: false, z: -ESCALATOR.offsetZ, topX, bottomX });
+}
+/** Half the width of a pair, from the atrium centre line to the outer balustrade. */
+export const ESCALATOR_PAIR_HALF_Z = ESCALATOR.offsetZ + ESCALATOR.width / 2;
+const ESCALATOR_NEAR_X = MALL.voidHalfX - 2 * ESCALATOR.flat - ESCALATOR.run; // |x| of the bottom ends
+
 const TILE = 2; // floor tile size
 
 /** True when a player of radius `r` can stand at (x, z) on the given floor. */
@@ -44,6 +66,8 @@ export function isWalkable(floorIndex, x, z, r) {
     const inVoidX = Math.abs(x) < MALL.voidHalfX + MALL.railGap + r;
     const inVoidZ = Math.abs(z) < MALL.voidHalfZ + MALL.railGap + r;
     if (inVoidX && inVoidZ) return false;
+  } else if (Math.abs(x) > ESCALATOR_NEAR_X - r && Math.abs(x) < MALL.voidHalfX + r && Math.abs(z) < ESCALATOR_PAIR_HALF_Z + r) {
+    return false; // under an escalator
   }
 
   const minDist = MALL.columnRadius + r;
@@ -156,9 +180,15 @@ export function buildMall(scene, renderer) {
     const z = side * (voidHalfZ + 0.02);
     box("glass", longLen, railH, 0.04, 0, railY, z);
     box("metal", longLen, 0.06, 0.1, 0, handY, z);
+    // Short sides: a gap in the middle where the escalators arrive
     const x = side * (voidHalfX + 0.02);
-    box("glass", 0.04, railH, shortLen, x, railY, 0);
-    box("metal", 0.1, 0.06, shortLen, x, handY, 0);
+    const gap = ESCALATOR_PAIR_HALF_Z;
+    const pieceLen = voidHalfZ - gap;
+    for (const half of [1, -1]) {
+      const pz = half * (gap + pieceLen / 2);
+      box("glass", 0.04, railH, pieceLen, x, railY, pz);
+      box("metal", 0.1, 0.06, pieceLen, x, handY, pz);
+    }
   }
 
   // Roof with a skylight over the atrium

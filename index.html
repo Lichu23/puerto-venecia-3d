@@ -20,41 +20,42 @@
 
     <div id="hud" class="hud">
       <p id="floor-label" class="floor-label" aria-live="polite">Planta Baja</p>
-      <div class="crosshair" aria-hidden="true"></div>
-      <p id="aim-hint" class="aim-hint desktop-only" hidden></p>
+      <p id="aim-hint" class="aim-hint" hidden></p>
 
-      <!-- Touch screens only (shown by CSS when the main pointer is a finger) -->
-      <button id="pause" type="button" class="pause touch-only">Menú</button>
-      <div class="floor-switch touch-only" role="group" aria-label="Cambiar de planta">
+      <button id="menu" type="button" class="menu-button" hidden>Menú</button>
+      <div class="floor-switch" role="group" aria-label="Cambiar de planta">
         <button type="button" data-floor="1" aria-pressed="false">Alta</button>
         <button type="button" data-floor="0" aria-pressed="true">Baja</button>
-      </div>
-      <div id="joystick" class="joystick touch-only" aria-hidden="true">
-        <div id="joystick-knob" class="joystick-knob"></div>
       </div>
     </div>
 
     <div id="overlay" class="overlay">
       <section class="panel" role="dialog" aria-modal="true" aria-labelledby="title">
         <h1 id="title">Puerto Venecia 3D</h1>
-        <p class="subtitle">Prototipo · Paso 3: información de tiendas</p>
+        <p class="subtitle">Prototipo · Paso 5: escaleras mecánicas</p>
 
         <button id="start" type="button" class="start" disabled>Cargando…</button>
 
         <dl class="keys desktop-only">
-          <div><dt><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> o flechas</dt><dd>Moverse</dd></div>
-          <div><dt>Ratón</dt><dd>Mirar alrededor</dd></div>
-          <div><dt><kbd>Shift</kbd></dt><dd>Correr</dd></div>
-          <div><dt><kbd>1</kbd> <kbd>2</kbd></dt><dd>Planta baja / alta</dd></div>
-          <div><dt>Clic en una tienda</dt><dd>Ver información</dd></div>
+          <div><dt>Clic en el suelo</dt><dd>Ir hasta ahí</dd></div>
+          <div><dt>Líneas azules del suelo</dt><dd>Carriles por los que te mueves</dd></div>
+          <div><dt>Arrastrar con el ratón</dt><dd>Mirar alrededor</dd></div>
+          <div><dt>Clic en una tienda</dt><dd>Ir a la tienda y ver información</dd></div>
+          <div><dt><kbd>↑</kbd> <kbd>↓</kbd></dt><dd>Avanzar / retroceder</dd></div>
+          <div><dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Girar</dd></div>
+          <div><dt>Clic en una escalera mecánica</dt><dd>Subir o bajar de planta</dd></div>
+          <div><dt><kbd>1</kbd> <kbd>2</kbd> o Alta / Baja</dt><dd>Ir a la escalera más cercana y cambiar de planta</dd></div>
           <div><dt><kbd>Esc</kbd></dt><dd>Menú</dd></div>
         </dl>
 
         <dl class="keys touch-only">
-          <div><dt>Mando (abajo a la izquierda)</dt><dd>Moverse</dd></div>
+          <div><dt>Tocar una flecha del suelo</dt><dd>Avanzar en esa dirección</dd></div>
+          <div><dt>Tocar el suelo</dt><dd>Ir hasta ahí</dd></div>
+          <div><dt>Líneas azules del suelo</dt><dd>Carriles por los que te mueves</dd></div>
           <div><dt>Arrastrar en la pantalla</dt><dd>Mirar alrededor</dd></div>
-          <div><dt>Tocar una tienda</dt><dd>Ver información</dd></div>
-          <div><dt>Alta / Baja</dt><dd>Planta alta / baja</dd></div>
+          <div><dt>Tocar una tienda</dt><dd>Ir a la tienda y ver información</dd></div>
+          <div><dt>Tocar una escalera mecánica</dt><dd>Subir o bajar de planta</dd></div>
+          <div><dt>Alta / Baja</dt><dd>Ir a la escalera más cercana y cambiar de planta</dd></div>
           <div><dt>Menú (arriba a la derecha)</dt><dd>Volver a este panel</dd></div>
         </dl>
 
