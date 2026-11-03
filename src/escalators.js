@@ -8,7 +8,7 @@ import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { LANE_X, LANE_Z, pathLength, planPath } from "./lanes.js";
 import { ESCALATOR, ESCALATORS, FLOORS } from "./mall.js";
 
-const STEP_OFF = 1.5; // metres walked past the comb plate when stepping on or off
+const STEP_OFF = ESCALATOR.stepOff;
 const NEAR = 5; // metres: this close to where you step on, the arrows offer the ride
 const RISE = FLOORS[1].y - FLOORS[0].y;
 const STEP_COUNT = 30;
@@ -22,7 +22,7 @@ const slopeBottomX = (e) => e.bottomX + e.side * flat;
 const slopeTopX = (e) => e.topX - e.side * flat;
 
 /** Ground-floor spot where you step on (up) or off (down). */
-const footOf = (e) => ({ x: e.bottomX - e.side * STEP_OFF, y: FLOORS[0].y, z: e.z });
+const footOf = (e) => ({ x: e.footX, y: FLOORS[0].y, z: e.z });
 /** Upper-floor spot where you step off (up) or on (down). */
 const headOf = (e) => ({ x: e.topX + e.side * STEP_OFF, y: FLOORS[1].y, z: e.z });
 

@@ -4,6 +4,9 @@
 // the north and south lanes at any point. Every move is forward/back along a lane or a
 // sideways hop, never a free diagonal.
 //
+// On the ground floor there is also a short cross lane in front of each escalator pair
+// (x = footX), from the north lane to the south lane, so you can walk up to the escalators.
+//
 // The loop is measured by `s`, the distance along it, starting at the north-west corner
 // and running north lane (west to east), east lane, south lane (east to west), west lane.
 
@@ -26,6 +29,8 @@ const ESCALATOR_SPANS = [...new Set(ESCALATORS.map((e) => e.side))].map((side) =
   const e = ESCALATORS.find((esc) => esc.side === side);
   return { min: Math.min(e.topX, e.bottomX) - ESCALATOR_CLEARANCE, max: Math.max(e.topX, e.bottomX) + ESCALATOR_CLEARANCE };
 });
+
+const SPUR_X = [...new Set(ESCALATORS.map((e) => e.footX))]; // cross lanes in front of the escalators
 
 const wrap = (s) => ((s % LOOP) + LOOP) % LOOP;
 
@@ -93,6 +98,20 @@ function hopPath(from, toZ, toX = from.x) {
   return points;
 }
 
+/**
+ * Lane spot nearest a point on the floor: on the loop, or on the ground floor also on a
+ * cross lane in front of the escalators. Returns { x, z, lane } (lane "x" for a cross lane).
+ */
+export function snapTarget(floorIndex, x, z) {
+  const spot = snapToLane(x, z);
+  if (floorIndex !== 0 || Math.abs(z) >= LANE_Z) return spot;
+  const loopD = Math.hypot(spot.x - x, spot.z - z);
+  for (const sx of SPUR_X) {
+    if (Math.abs(x - sx) < loopD) return { lane: "x", x: sx, z };
+  }
+  return spot;
+}
+
 export function pathLength(points) {
   let length = 0;
   for (let i = 1; i < points.length; i++) length += Math.hypot(points[i].x - points[i - 1].x, points[i].z - points[i - 1].z);
@@ -111,6 +130,19 @@ function inMiddle(floorIndex, x, z) {
  * is the camera spot itself, so a camera caught between lanes slides onto one first.
  */
 export function planPath(floorIndex, x, z, targetX, targetZ) {
+  // Both on the same cross lane: straight along it.
+  if (inMiddle(floorIndex, x, z) && inMiddle(floorIndex, targetX, targetZ) && Math.abs(x - targetX) < 0.5) {
+    return [{ x, z }, { x: targetX, z: targetZ }];
+  }
+  // Going to a spot on a cross lane: along the lanes to its end that makes the trip shorter, then along it.
+  if (inMiddle(floorIndex, targetX, targetZ)) {
+    let best = null;
+    for (const laneZ of [LANE_Z, -LANE_Z]) {
+      const points = [...planPath(floorIndex, x, z, targetX, laneZ), { x: targetX, z: targetZ }];
+      if (!best || pathLength(points) < pathLength(best)) best = points;
+    }
+    return best;
+  }
   // Between the long lanes: step sideways onto whichever one makes the trip shorter.
   if (inMiddle(floorIndex, x, z)) {
     let best = null;

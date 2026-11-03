@@ -7,7 +7,7 @@
 
 import * as THREE from "three";
 import { approachPath, escalatorAt, exitPath, nearbyRides, nearestEscalator, rideDirection, ridePath } from "./escalators.js";
-import { LANE_X, laneMoves, pathLength, planPath, snapToLane } from "./lanes.js";
+import { LANE_X, laneMoves, pathLength, planPath, snapTarget } from "./lanes.js";
 import { FLOORS, MALL } from "./mall.js";
 
 const EYE_HEIGHT = 1.65;
@@ -16,7 +16,8 @@ const MIN_STEP = 0.4; // shorter moves are ignored
 const KEY_STEP = 5; // metres per up/down key press
 const KEY_TURN = Math.PI / 6; // 30 degrees per left/right key press
 const LOOK_SPEED = { mouse: 0.003, touch: 0.004, pen: 0.004 }; // radians per pixel dragged
-const TAP_SLOP = { mouse: 6, touch: 10, pen: 10 }; // px a press may move and still count as a click
+const TAP_SLOP = { mouse: 12, touch: 12, pen: 12 }; // px a press may move and still count as a click
+const TAP_TIME = 450; // ms: a press held longer is someone about to look around, not a click
 const MAX_PITCH = Math.PI / 2 - 0.05; // don't flip over when looking straight up or down
 const RIDE_TIME = 5; // seconds on the escalator (faster than real life, slow enough to look around)
 const RIDE_PITCH = { up: 0.12, down: -0.3 }; // look a little up the slope, or down at the floor below
@@ -73,8 +74,9 @@ export function createPlayer(camera, surface, { onFloorChange, onTap } = {}) {
 
     // The lane comes from where the click really lands; only the distance along it is capped.
     const pos = camera.position;
-    const spot = snapToLane(hit.x, hit.z);
-    if (spot.lane === "n" || spot.lane === "s") spot.x = THREE.MathUtils.clamp(spot.x, pos.x - MAX_REACH, pos.x + MAX_REACH);
+    const spot = snapTarget(floorIndex, hit.x, hit.z);
+    if (spot.lane === "x") spot.z = THREE.MathUtils.clamp(spot.z, pos.z - MAX_REACH, pos.z + MAX_REACH);
+    else if (spot.lane === "n" || spot.lane === "s") spot.x = THREE.MathUtils.clamp(spot.x, pos.x - MAX_REACH, pos.x + MAX_REACH);
     else spot.z = THREE.MathUtils.clamp(spot.z, pos.z - MAX_REACH, pos.z + MAX_REACH);
     if (pathLength(planPath(floorIndex, pos.x, pos.z, spot.x, spot.z)) < MIN_STEP) return null;
     return new THREE.Vector3(spot.x, floorY, spot.z);
@@ -231,7 +233,7 @@ export function createPlayer(camera, surface, { onFloorChange, onTap } = {}) {
   // Drag to look; a press that barely moves is a click/tap instead.
   function onPointerDown(event) {
     if (!enabled || drag || (event.pointerType === "mouse" && event.button !== 0)) return;
-    drag = { id: event.pointerId, type: event.pointerType, startX: event.clientX, startY: event.clientY, lastX: event.clientX, lastY: event.clientY, moved: false };
+    drag = { id: event.pointerId, type: event.pointerType, time: event.timeStamp, startX: event.clientX, startY: event.clientY, lastX: event.clientX, lastY: event.clientY, moved: false };
     surface.setPointerCapture(event.pointerId);
   }
 
@@ -257,7 +259,7 @@ export function createPlayer(camera, surface, { onFloorChange, onTap } = {}) {
 
   function onPointerUp(event) {
     if (!drag || event.pointerId !== drag.id) return;
-    const wasTap = !drag.moved && event.type === "pointerup";
+    const wasTap = !drag.moved && event.type === "pointerup" && event.timeStamp - drag.time < TAP_TIME;
     endDrag();
     if (wasTap && enabled && !riding) onTap?.(event.clientX, event.clientY, event.pointerType);
   }

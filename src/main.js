@@ -38,7 +38,19 @@ const skyColor = new THREE.Color(0xcfd8e3);
 scene.background = skyColor;
 scene.fog = new THREE.Fog(skyColor, 60, 170);
 
-const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 250);
+// Desktop screens get a wider view (less "zoomed in"); the mouse wheel zooms in and out.
+const finePointer = window.matchMedia("(pointer: fine)").matches;
+const FOV = { start: finePointer ? 82 : 70, min: 45, max: 95 };
+const camera = new THREE.PerspectiveCamera(FOV.start, window.innerWidth / window.innerHeight, 0.1, 250);
+canvas.addEventListener(
+  "wheel",
+  (event) => {
+    event.preventDefault(); // the page itself never scrolls
+    camera.fov = THREE.MathUtils.clamp(camera.fov + Math.sign(event.deltaY) * 4, FOV.min, FOV.max);
+    camera.updateProjectionMatrix();
+  },
+  { passive: false },
+);
 
 buildMall(scene, renderer);
 buildLaneLines(scene);

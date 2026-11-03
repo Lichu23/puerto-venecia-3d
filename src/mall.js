@@ -43,12 +43,14 @@ export const ESCALATOR = {
   stepWidth: 1.0,
   width: 1.6, // across the balustrades
   offsetZ: 1.1, // centre line of each escalator from the middle of the atrium
+  stepOff: 1.5, // metres walked past the comb plate when stepping on or off
 };
 export const ESCALATORS = [];
 for (const side of [-1, 1]) {
   const topX = side * MALL.voidHalfX; // top comb plate, at the upper floor edge
   const bottomX = topX - side * (2 * ESCALATOR.flat + ESCALATOR.run); // bottom comb plate
-  ESCALATORS.push({ side, up: true, z: ESCALATOR.offsetZ, topX, bottomX }, { side, up: false, z: -ESCALATOR.offsetZ, topX, bottomX });
+  const footX = bottomX - side * ESCALATOR.stepOff; // ground-floor spot in front of the pair
+  ESCALATORS.push({ side, up: true, z: ESCALATOR.offsetZ, topX, bottomX, footX }, { side, up: false, z: -ESCALATOR.offsetZ, topX, bottomX, footX });
 }
 /** Half the width of a pair, from the atrium centre line to the outer balustrade. */
 export const ESCALATOR_PAIR_HALF_Z = ESCALATOR.offsetZ + ESCALATOR.width / 2;
